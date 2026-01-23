@@ -10,3 +10,6 @@ __pycache__/
 
 # mac junk
 .DS_Store
+dataset/
+venv/
+.DS_Store
