@@ -13,3 +13,9 @@ __pycache__/
 dataset/
 venv/
 .DS_Store
+
+# ignore large/local stuff
+dataset/
+venv/
+.DS_Store
+__pycache__/
