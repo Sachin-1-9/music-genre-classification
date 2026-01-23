@@ -1,11 +1,12 @@
-# Python virtual environment
+# virtual environment
 venv/
 
-# Features CSV
-features.csv
+# later days (do not commit now)
+backend/
+frontend/
 
-# Dataset
-dataset/
+# python cache
+__pycache__/
 
-# MacOS files
+# mac junk
 .DS_Store
