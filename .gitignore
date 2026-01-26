@@ -1,10 +1,13 @@
-
-# later days (do not commit now)
-frontend/
-
-
-# ignore large/local stuff
-dataset/
+# Python
 venv/
-.DS_Store
 __pycache__/
+*.pyc
+
+# Dataset
+dataset/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
