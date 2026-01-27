@@ -31,4 +31,5 @@ A full-stack machine learning project that classifies music into genres such as 
 - **HTML / CSS**
 
 ---
+![Upload Screen](screenshots/upload.png)
 
