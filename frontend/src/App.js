@@ -89,6 +89,10 @@ export default function App() {
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", API_URL, true);
+    
+    // Add cache-busting headers
+    xhr.setRequestHeader("Cache-Control", "no-cache");
+    xhr.setRequestHeader("Pragma", "no-cache");
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
@@ -114,7 +118,13 @@ export default function App() {
 
     xhr.onerror = () => {
       setBusy(false);
-      setErr("Network error. Backend not reachable.");
+      console.error("Network error details:", {
+        status: xhr.status,
+        statusText: xhr.statusText,
+        response: xhr.responseText,
+        readyState: xhr.readyState
+      });
+      setErr(`Network error. Backend not reachable. Status: ${xhr.status}`);
     };
 
     xhr.send(fd);
