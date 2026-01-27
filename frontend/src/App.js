@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
 const API_BASE = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
-const API_URL = `${API_BASE}/predict`;
+const API_URL = `${API_BASE.replace(/\/$/, '')}/predict`;
 
 function formatBytes(bytes) {
   if (!bytes && bytes !== 0) return "-";

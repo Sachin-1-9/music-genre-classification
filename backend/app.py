@@ -9,7 +9,7 @@ import tempfile
 import subprocess
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://music-genre-classification-six.vercel.app", "http://localhost:3000", "http://127.0.0.1:3000"])
 
 # Allow large uploads (300 MB)
 app.config["MAX_CONTENT_LENGTH"] = 300 * 1024 * 1024
