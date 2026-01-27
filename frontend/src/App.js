@@ -78,6 +78,7 @@ export default function App() {
   // Test connection first
   const testConnection = async () => {
     try {
+      console.log("Testing connection to:", HEALTH_URL);
       const response = await fetch(HEALTH_URL, {
         method: 'GET',
         mode: 'cors',
@@ -86,11 +87,26 @@ export default function App() {
           'Cache-Control': 'no-cache',
         }
       });
+      console.log("Connection test response:", response.status, response.statusText);
       return response.ok;
     } catch (error) {
       console.error("Connection test failed:", error);
       return false;
     }
+  };
+
+  // Manual connection test for debugging
+  const handleTestConnection = async () => {
+    setBusy(true);
+    setErr("");
+    const connected = await testConnection();
+    if (connected) {
+      setResult({message: "Connection successful!", genre: "test"});
+      setProgress(100);
+    } else {
+      setErr("Connection failed - check console for details");
+    }
+    setBusy(false);
   };
 
   // Upload with progress using XHR (with fetch fallback)
@@ -233,6 +249,10 @@ export default function App() {
 
               <button className="btn ghost" onClick={resetAll} disabled={busy}>
                 Reset
+              </button>
+
+              <button className="btn outline" onClick={handleTestConnection} disabled={busy}>
+                {busy ? "Testing..." : "Test Connection"}
               </button>
             </div>
 
