@@ -88,13 +88,17 @@ export default function App() {
     fd.append("file", file);
 
     try {
-      // Try fetch first (better HTTP/2 handling)
-      const response = await fetch(API_URL, {
+      // Try fetch with timestamp to bypass caching
+      const timestamp = Date.now();
+      const response = await fetch(`${API_URL}?_t=${timestamp}`, {
         method: 'POST',
         body: fd,
+        mode: 'cors', // Explicitly set CORS mode
+        credentials: 'omit', // Don't send credentials
         headers: {
-          'Cache-Control': 'no-cache',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
+          'Expires': '0',
         }
       });
 
@@ -118,14 +122,13 @@ export default function App() {
   // XHR fallback method
   const predictWithXHR = (fd) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", API_URL, true);
+    const timestamp = Date.now();
+    xhr.open("POST", `${API_URL}?_t=${timestamp}`, true);
     
-    // Force HTTP/1.1 to avoid HTTP/2 protocol errors
-    xhr.setRequestHeader("Connection", "close");
-    
-    // Add cache-busting headers
-    xhr.setRequestHeader("Cache-Control", "no-cache");
+    // Add cache-busting headers only (Connection header is unsafe)
+    xhr.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     xhr.setRequestHeader("Pragma", "no-cache");
+    xhr.setRequestHeader("Expires", "0");
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
