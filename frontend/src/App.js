@@ -72,8 +72,8 @@ export default function App() {
     if (inputRef.current) inputRef.current.value = "";
   };
 
-  // Upload with progress using XHR
-  const predict = () => {
+  // Upload with progress using XHR (with fetch fallback)
+  const predict = async () => {
     if (!file) {
       setErr("Please choose an audio/video file first.");
       return;
@@ -87,8 +87,41 @@ export default function App() {
     const fd = new FormData();
     fd.append("file", file);
 
+    try {
+      // Try fetch first (better HTTP/2 handling)
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        body: fd,
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        }
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setResult(data);
+        setProgress(100);
+      } else {
+        setErr(data?.error || `Request failed (${response.status})`);
+      }
+    } catch (fetchError) {
+      // Fallback to XHR if fetch fails
+      console.log("Fetch failed, trying XHR:", fetchError);
+      predictWithXHR(fd);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // XHR fallback method
+  const predictWithXHR = (fd) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", API_URL, true);
+    
+    // Force HTTP/1.1 to avoid HTTP/2 protocol errors
+    xhr.setRequestHeader("Connection", "close");
     
     // Add cache-busting headers
     xhr.setRequestHeader("Cache-Control", "no-cache");
@@ -102,7 +135,6 @@ export default function App() {
     };
 
     xhr.onload = () => {
-      setBusy(false);
       try {
         const data = JSON.parse(xhr.responseText || "{}");
         if (xhr.status >= 200 && xhr.status < 300) {
@@ -117,7 +149,6 @@ export default function App() {
     };
 
     xhr.onerror = () => {
-      setBusy(false);
       console.error("Network error details:", {
         status: xhr.status,
         statusText: xhr.statusText,
