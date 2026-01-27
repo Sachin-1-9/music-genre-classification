@@ -18,7 +18,7 @@ app.config["MAX_CONTENT_LENGTH"] = 300 * 1024 * 1024
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
-MODEL_PATH = os.path.join(BASE_DIR, "model", "model", "genre_classifier.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "model", "genre_classifier.pkl")
 FEATURES_CSV_PATH = os.path.join(BASE_DIR, "features.csv")
 
 # --- Supported file types ----
