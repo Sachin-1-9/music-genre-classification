@@ -127,7 +127,7 @@ export default function App() {
           <div className="brandIcon" />
           <div className="brandText">
             <div className="brandTitle">Music Genre Classification</div>
-            <div className="brandSub">Upload audio/video → predict genre</div>
+            <div className="brandSub">Upload audio/video → predict genre (SVM + Librosa)</div>
           </div>
         </div>
 
@@ -150,10 +150,10 @@ export default function App() {
               <div className="k">File size</div>
               <div className="v">{file ? formatBytes(file.size) : "-"}</div>
             </div>
-            {/* <div className="row">
+            <div className="row">
               <div className="k">Backend URL</div>
               <div className="v mono">{API_URL}</div>
-            </div> */}
+            </div>
 
             <div className="btnRow">
               <label className="btn outline">

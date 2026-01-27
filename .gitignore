@@ -1,13 +1,85 @@
+# ===============================
 # Python
-venv/
+# ===============================
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*.log
 
-# Dataset
-dataset/
+# Virtual environments
+venv/
+env/
+.venv/
 
-# Node
+# Python tools
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+
+# ===============================
+# Flask / Backend
+# ===============================
+backend/app.db
+backend/*.db
+instance/
+
+# ===============================
+# Machine Learning Artifacts
+# ===============================
+*.h5
+*.joblib
+*.onnx
+*.pt
+*.pth
+
+# (Keep model file if you want it in Git)
+# model/genre_classifier.pkl
+
+# ===============================
+# Node / React
+# ===============================
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# OS
+# React build output
+build/
+dist/
+
+# ===============================
+# OS / Editor
+# ===============================
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===============================
+# Frontend cache
+# ===============================
+frontend/node_modules/
+frontend/build/
+
+# ===============================
+# Dataset (do NOT upload large datasets)
+# ===============================
+dataset/
+data/
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mkv
+*.flac
+*.ogg
+
+# ===============================
+# Misc
+# ===============================
+.env
+.env.local
+.env.*.local
