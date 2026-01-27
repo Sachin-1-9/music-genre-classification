@@ -127,11 +127,11 @@ export default function App() {
           <div className="brandIcon" />
           <div className="brandText">
             <div className="brandTitle">Music Genre Classification</div>
-            <div className="brandSub">Upload audio/video → predict genre (SVM + Librosa)</div>
+            <div className="brandSub">Upload audio/video → predict genre</div>
           </div>
         </div>
 
-        <div className="pill">React UI</div>
+        <div className="pill">🎧</div>
       </header>
 
       {/* Layout */}
@@ -150,11 +150,6 @@ export default function App() {
               <div className="k">File size</div>
               <div className="v">{file ? formatBytes(file.size) : "-"}</div>
             </div>
-            <div className="row">
-              <div className="k">Backend URL</div>
-              <div className="v mono">{API_URL}</div>
-            </div>
-
             <div className="btnRow">
               <label className="btn outline">
                 Choose file
@@ -211,8 +206,6 @@ export default function App() {
         {previewUrl && (
           <section className="panel previewPanel">
             <h2 className="h2">Preview</h2>
-            <p className="muted">Preview fits screen on laptop. On mobile, scrolling is enabled.</p>
-
             <div className="previewShell">
               {isVideoFile(file) ? (
                 <video className="media" controls src={previewUrl} />

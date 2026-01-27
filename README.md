@@ -1,3 +1,4 @@
+
 #  Music Genre Classification using Machine Learning
 
 A full-stack machine learning project that classifies music into genres such as **rock, jazz, classical, pop, hiphop, metal**, etc., using audio signal processing and a trained ML model.
