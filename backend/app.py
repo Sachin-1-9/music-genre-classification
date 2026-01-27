@@ -40,6 +40,15 @@ _expected_cols = list(pd.read_csv(FEATURES_CSV_PATH, nrows=0).columns)
 if "label" in _expected_cols:
     _expected_cols.remove("label")
 
+# --- Warm up librosa to avoid compilation issues ---
+try:
+    # Create a dummy audio signal to warm up librosa components
+    dummy_audio = np.random.randn(22050)  # 1 second of dummy audio
+    librosa.feature.zero_crossing_rate(dummy_audio)
+    print("Librosa components warmed up successfully")
+except Exception as e:
+    print(f"Librosa warm-up failed: {e}, will use fallback ZCR")
+
 
 def ffmpeg_extract_wav(video_path: str, out_wav_path: str):
     """
@@ -70,21 +79,32 @@ def extract_features_matching_schema(audio_path: str) -> np.ndarray:
       - Spectral rolloff mean (1)
       - ZCR mean (1)
     """
-    y, sr = librosa.load(audio_path, duration=30, mono=True)
+    try:
+        y, sr = librosa.load(audio_path, duration=30, mono=True)
 
-    mfcc_mean = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)      # 40
-    chroma_mean = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)        # 12
-    spec_centroid = float(np.mean(librosa.feature.spectral_centroid(y=y, sr=sr)))   # 1
-    spec_rolloff = float(np.mean(librosa.feature.spectral_rolloff(y=y, sr=sr)))     # 1
-    zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))                     # 1
+        mfcc_mean = np.mean(librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40).T, axis=0)      # 40
+        chroma_mean = np.mean(librosa.feature.chroma_stft(y=y, sr=sr).T, axis=0)        # 12
+        spec_centroid = float(np.mean(librosa.feature.spectral_centroid(y=y, sr=sr)))   # 1
+        spec_rolloff = float(np.mean(librosa.feature.spectral_rolloff(y=y, sr=sr)))     # 1
+        
+        # Handle ZCR with fallback to avoid compilation issues
+        try:
+            zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))                 # 1
+        except Exception as zcr_error:
+            print(f"ZCR computation failed: {zcr_error}, using fallback")
+            # Fallback: manual ZCR calculation
+            zcr = float(np.mean(np.diff(np.sign(y)) != 0))
 
-    raw = np.hstack([mfcc_mean, chroma_mean, spec_centroid, spec_rolloff, zcr]).astype(np.float32)
+        raw = np.hstack([mfcc_mean, chroma_mean, spec_centroid, spec_rolloff, zcr]).astype(np.float32)
 
-    # Align to CSV schema length (expected: 55)
-    out = np.zeros(len(_expected_cols), dtype=np.float32)
-    m = min(len(out), len(raw))
-    out[:m] = raw[:m]
-    return out.reshape(1, -1)
+        # Align to CSV schema length (expected: 55)
+        out = np.zeros(len(_expected_cols), dtype=np.float32)
+        m = min(len(out), len(raw))
+        out[:m] = raw[:m]
+        return out.reshape(1, -1)
+    
+    except Exception as e:
+        raise RuntimeError(f"Feature extraction failed: {str(e)}")
 
 
 @app.get("/")
