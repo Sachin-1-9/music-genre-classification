@@ -21,7 +21,7 @@ ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
 MODEL_PATH = os.path.join(ROOT_DIR, "model", "genre_classifier.pkl")
 FEATURES_CSV_PATH = os.path.join(ROOT_DIR, "features.csv")
 
-# --- Supported file types ---
+# --- Supported file types ----
 AUDIO_EXTENSIONS = [".wav", ".mp3", ".ogg", ".flac", ".m4a", ".au", ".aiff", ".aif"]
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".mkv", ".avi", ".webm"]
 
