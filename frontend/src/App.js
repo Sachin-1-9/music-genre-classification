@@ -4,6 +4,9 @@ import "./App.css";
 const API_BASE = "https://music-genre-classification-yiwe.onrender.com";
 const API_URL = `${API_BASE}/predict`;
 
+// Alternative: Try a different endpoint or method
+const HEALTH_URL = `${API_BASE}/`;
+
 function formatBytes(bytes) {
   if (!bytes && bytes !== 0) return "-";
   const units = ["B", "KB", "MB", "GB"];
@@ -72,6 +75,24 @@ export default function App() {
     if (inputRef.current) inputRef.current.value = "";
   };
 
+  // Test connection first
+  const testConnection = async () => {
+    try {
+      const response = await fetch(HEALTH_URL, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      });
+      return response.ok;
+    } catch (error) {
+      console.error("Connection test failed:", error);
+      return false;
+    }
+  };
+
   // Upload with progress using XHR (with fetch fallback)
   const predict = async () => {
     if (!file) {
@@ -84,22 +105,24 @@ export default function App() {
     setResult(null);
     setProgress(0);
 
+    // Test connection first
+    const isConnected = await testConnection();
+    if (!isConnected) {
+      setErr("Cannot connect to backend. Please check your internet connection and try again.");
+      setBusy(false);
+      return;
+    }
+
     const fd = new FormData();
     fd.append("file", file);
 
     try {
-      // Try fetch with timestamp to bypass caching
-      const timestamp = Date.now();
-      const response = await fetch(`${API_URL}?_t=${timestamp}`, {
+      // Try a simpler approach - no timestamp, just basic fetch
+      const response = await fetch(API_URL, {
         method: 'POST',
         body: fd,
-        mode: 'cors', // Explicitly set CORS mode
-        credentials: 'omit', // Don't send credentials
-        headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        }
+        mode: 'cors',
+        credentials: 'omit',
       });
 
       const data = await response.json();
@@ -122,13 +145,10 @@ export default function App() {
   // XHR fallback method
   const predictWithXHR = (fd) => {
     const xhr = new XMLHttpRequest();
-    const timestamp = Date.now();
-    xhr.open("POST", `${API_URL}?_t=${timestamp}`, true);
+    xhr.open("POST", API_URL, true);
     
-    // Add cache-busting headers only (Connection header is unsafe)
-    xhr.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    xhr.setRequestHeader("Pragma", "no-cache");
-    xhr.setRequestHeader("Expires", "0");
+    // Minimal headers to avoid issues
+    xhr.setRequestHeader("Accept", "application/json");
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
