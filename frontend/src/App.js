@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 
-const API_BASE = "https://music-genre-classification-yiwe.onrender.com";
+const API_BASE = "https://music-genre-classification-659n.onrender.com";
 const API_URL = `${API_BASE}/predict`;
 
 // Alternative: Try a different endpoint or method
